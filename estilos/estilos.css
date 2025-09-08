@@ -1,0 +1,89 @@
+@import url('https://fonts.googleapis.com/css2?family=IM+Fell+French+Canon&display=swap');
+
+* { 
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+main {
+  font-family: 'IM Fell French Canon', serif;
+}
+
+.navbar {
+  border-bottom: 4px solid #32a7ca;
+}
+
+.banner {
+  width: 100vw;
+  position: relative;
+  margin-top: 56px;
+  height: 60vh;
+  background: url('../img/banner.jpg') center center / cover no-repeat;
+  color: white;
+  display: flex;
+  align-items: center;
+  padding-left: 2cm;
+  border-bottom: 4px solid #32a7ca;
+  left: 50%;
+  right: 50%;
+  margin-left: -50vw;
+  margin-right: -50vw;
+}
+
+.titulo-header {
+  font-family: 'IM Fell French Canon', serif;
+  display: inline-block;            
+  text-align: center;               
+  line-height: 1;
+}
+
+.titulo-clinica {
+  font-size: 4.4rem;                
+  display: block;
+  font-weight: 400;                 
+}
+
+.filete-azul {
+  height: 4px;
+  background-color: #32a7ca;
+  border-color: #32a7ca;
+  width: 100%;
+}
+
+.titulo-concordia {
+  font-size: 5.5rem;
+  display: block;
+  font-weight: 400;
+}
+
+.titulo-clinica,
+.titulo-concordia {
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6);
+}
+
+footer.footer {
+  border-top: 6px solid #32a7ca;
+  background: linear-gradient(to bottom, #32a7ca, #c5eaf8);
+  padding: 1.5rem 0;
+  font-family: 'IM Fell French Canon', serif;
+  color: #000;
+}
+
+footer.footer h5 {
+  font-family: 'IM Fell French Canon', serif;
+  font-size: 1.3rem; 
+  margin-bottom: 0.5rem;
+}
+
+footer.footer p,
+footer.footer a {
+  font-family: 'IM Fell French Canon', serif;
+  font-size: 1rem;
+  color: #000;
+  text-decoration: none;
+}
+
+footer.footer a:hover {
+  text-decoration: underline;
+}
