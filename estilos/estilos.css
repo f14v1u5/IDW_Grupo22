@@ -6,6 +6,7 @@
   box-sizing: border-box;
 }
 
+
 main {
   font-family: 'IM Fell French Canon', serif;
 }
@@ -142,10 +143,12 @@ main {
 }
 
 .filete-azul {
-  height: 4px;
+  height: 5px;
   background-color: #32a7ca;
   border-color: #32a7ca;
   width: 100%;
+  margin: 0;
+  padding: 0;
 }
 
 .titulo-concordia {
