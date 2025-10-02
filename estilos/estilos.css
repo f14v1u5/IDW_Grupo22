@@ -18,7 +18,7 @@ main {
   width: 100vw;
   position: relative;
   margin-top: 56px;
-  height: 60vh;
+  height: 60vh; /* Altura del banner para pantallas grandes */
   background: url('../img/banner.jpg') center center / cover no-repeat;
   color: white;
   display: flex;
@@ -29,6 +29,103 @@ main {
   right: 50%;
   margin-left: -50vw;
   margin-right: -50vw;
+}
+
+.logo-banner {
+  max-height: 100px; 
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center; 
+  text-align: center;
+  height: 100%;
+  border: 1px solid #32a7ca;
+  border-radius: 8px; 
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.card-img-top {
+  border-radius: 50%;
+  width: 100px;
+  height: 100px; 
+  object-fit: cover;
+  margin-bottom: 20px;
+  margin-top: 20px;
+  border: 5px solid #1999c0; 
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); 
+}
+
+.card-body {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.card-title {
+  font-weight: bold;
+}
+
+.card-subtitle {
+  color: #777;
+  font-size: 0.9rem;
+}
+
+
+/* Media Query para celulares */
+@media (max-width: 767px) {
+  .banner {
+    height: 40vh; 
+    padding-left: 1rem; 
+    background-position: center center;  
+  }
+
+  .titulo-clinica {
+    font-size: 3rem; 
+  }
+
+  .titulo-concordia {
+    font-size: 4rem; 
+  }
+}
+
+/* Media Query para tablets */
+@media (min-width: 768px) and (max-width: 1024px) {
+  .banner {
+    height: 50vh; 
+    padding-left: 1.5rem;
+  }
+
+  .titulo-clinica {
+    font-size: 3.5rem; 
+  }
+
+  .titulo-concordia {
+    font-size: 4.5rem; 
+  }
+}
+
+/* Media Query para PCs */
+@media (min-width: 1024px) {
+  .banner {
+    height: 60vh;
+  }
+
+  .titulo-clinica {
+    font-size: 4.4rem;
+  }
+
+  .titulo-concordia {
+    font-size: 5.5rem;
+  }
+
+  .logo-banner {
+  max-height: 180px;
+  }
+
 }
 
 .titulo-header {
@@ -62,6 +159,7 @@ main {
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6);
 }
 
+/* Footer */
 footer.footer {
   border-top: 6px solid #32a7ca;
   background: linear-gradient(to bottom, #32a7ca, #c5eaf8);
