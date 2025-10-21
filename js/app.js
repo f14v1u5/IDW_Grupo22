@@ -125,14 +125,20 @@ window.eliminarMedico = function(id) {
 
 // Funcion que se aloja en el onclick del boton de 'Acciones'
 window.editarMedico = function(id) {
-    const medicos = obtenerMedicos();
-    const medicoAeditar = medicos.find (medico => medico.id === id);
-    if (medicoAeditar) {
-        idInput.value = medicoAeditar.id;
-        tituloInput.value = medicoAeditar.titulo
-        nombreInput.value = medicoAeditar.nombre;
-        apellidoInput.value = medicoAeditar.apellido;
-        especialidadInput.value = medicoAeditar.especialidad;
-        descripcionInput.value = medicoAeditar.descripcion;
-    }
-}
+  const medico = obtenerMedicos().find(m => m.id === id);
+  if (medico) {
+    idInput.value = medico.id;
+    tituloINput.value = medico.titulo;
+    nombreInput.value = medico.nombre;
+    apellidoInput.value = medico.apellido;
+    especialidadInput.value = medico.especialidad;
+    descripcionInput.value = medico.descripcion;
+  }
+};
+
+window.borrarMedico = function(id) {
+  if (confirm('¿Estás seguro de que deseas eliminar este médico?')) {
+    eliminarMedico(id);
+    renderTabla();
+  }
+};
