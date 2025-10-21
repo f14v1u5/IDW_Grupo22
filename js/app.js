@@ -90,7 +90,7 @@ window.editarMedico = function(id) {
   const medico = obtenerMedicos().find(m => m.id === id);
   if (medico) {
     idInput.value = medico.id;
-    tituloINput.value = medico.titulo;
+    tituloInput.value = medico.titulo;
     nombreInput.value = medico.nombre;
     apellidoInput.value = medico.apellido;
     especialidadInput.value = medico.especialidad;
