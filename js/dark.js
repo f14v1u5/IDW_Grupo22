@@ -1,3 +1,4 @@
+// Funcion para ofrecer tema oscuro
 const boton = document.getElementById('tema');
 const html = document.documentElement;
 
