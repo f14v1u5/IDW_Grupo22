@@ -33,13 +33,16 @@
                                 <a class="nav-link" href="index.html">Inicio</a>
                             </li>
                             <li class="nav-item">
+                                <a class="nav-link" href="staff.html">Staff</a>
+                            </li>
+                            <li class="nav-item">
                                 <a class="nav-link" href="institucional.html">Institucional</a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" href="contacto.html">Contacto</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="login.html">Administración</a>
+                                <a class="nav-link" href="login.html">Login</a>
                             </li>
                         </ul>
                     </div>
@@ -54,12 +57,15 @@
             <p class="mb-5">Contamos con profesionales comprometidos y altamente capacitados. Su salud en buenas manos...</p>
         </section>
 
+        
         <div class="container mt-5">
             <div class="p-4 rounded shadow">
+                <!-- Este es nuestro elemento interactivo, en el div se irá cargando cada uno de los medicos -->
                 <div class="row" id="contenedor-medicos"></div>
             </div>  
         </div>  
     </main>
+
     <footer class="footer bg-light text-dark mt-5 py-4">
         <div class="container">
             <div class="row">
@@ -87,18 +93,28 @@
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="/script/dark.js"></script>
+    <script src="/js/dark.js"></script>
+
     <script>
+        /* Para mostrar al publico los medicos que se agregan definimos este escuchador el cual
+        ejecutará la funcion que se desarrolla una vez que se termian de cargar el documento html: */
         document.addEventListener("DOMContentLoaded", () => {
+            // Referenciamos el contenedor con su id
             const contenedor = document.getElementById("contenedor-medicos");
+            // Adquirimos los medicos del lS en formato JSON
             const medicos = JSON.parse(localStorage.getItem("medicos_eventos")) || [];
 
+            // Para cada medico de la lista
             medicos.forEach(medico => {
+            /* En caso de que el medico tenga una imagen guardada en formato 'base64' la usa,
+            si no, utiliza la ruta establecida */
             const imagenSrc = medico.imagenBase64 || medico.imagenRuta;
-
+            
+            // Generamos el elemento 'div' que nos devolverá toda la informacion de cada medico de la lista 'medicos'
             const card = document.createElement("div");
+            // Le damos estilo
             card.className = "col-md-4 mb-4";
-
+            // E introducimos todos los elementos html con los datos de los medicos
             card.innerHTML = `
                 <div class="card h-100">
                 <img src="${imagenSrc}" class="card-img-top" alt="Imagen de ${medico.nombre} ${medico.apellido}">
@@ -110,7 +126,6 @@
                 </div>
                 </div>
             `;
-
             contenedor.appendChild(card);
             });
         });
