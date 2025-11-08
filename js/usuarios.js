@@ -1,3 +1,73 @@
+const access_Token = 'accessToken';
+
+async function login(user, contra) {
+    try {
+        const respuesta = await fetch ('https://dummyjson.com/auth/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                username: user,
+                password: contra,
+            })
+        });
+    if (!respuesta.ok) {
+        throw new Error ('Usuario o contraseña incorrectos.');
+    }
+    const datos = await respuesta.json();
+    sessionStorage.setItem(access_Token, datos.token)
+
+    return true;
+    } catch (error) {
+        throw error;
+    }
+}
+
+function estaLogueado () {
+    return sessionStorage.getItem(access_Token) !== null;
+}
+
+function logout () {
+    sessionStorage.removeItem(access_Token);
+    window.location.reload();
+}
+
+function volverAtras () {
+    
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
 // Funcion para iniciar el Local Storage
 function checkSesion () {
     return localStorage.getItem('admin_logged_in') === 'true';
@@ -59,7 +129,7 @@ function cargaPanel () {
 }
 
 document.addEventListener('DOMContentLoaded', cargaPanel);
-
+*/
 
 
 
