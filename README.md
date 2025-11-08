@@ -15,3 +15,8 @@ v02
   Se agregan Media Querys para el manejo responsivo en distintos dispositivos
   Para dispositivos móviles se adapta el menú "hambuerguesa" cuando está colapsado
   Se agrega una página ("staff") para el catálogo de los médicos. El plantel se muestra en tarjetas.
+
+v03
+  Se agrega formulario para login
+  Se agregan funciones para la administración (CRUD) del staff de médicos.
+  
