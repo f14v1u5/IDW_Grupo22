@@ -15,6 +15,7 @@ const medicosIniciales = [
 // Funcion que carga los medicos de 'medicosIniciales'
 async function inicializarLocalStorage() {
     const medicosEnStorage = obtenerMedicos(); //'[]'
+    if (medicosEnStorage.length > 0) return; // No deberia sobreescribir si ya hay medicos cargados
     const idsEnStorage = medicosEnStorage.map(m => m.id); //'[]'
     let actualizados = [...medicosEnStorage]; //'[]'
 
@@ -32,8 +33,9 @@ async function inicializarLocalStorage() {
         }
     }
     // Finalmente pasamos el array a la funcion
-    guardarMedico(actualizados);
+        guardarMedico(actualizados);
     }
+
 
 // Funcion para transformar rutas a 'Base 64'
 // NOS SIRVE PARA ALMACENAR LAS FOTOS EN EL localStorage
@@ -117,7 +119,7 @@ function eliminarMedicoDeStorage(id) {
 }
 
 // ==================================================================
-// 💡 NUEVO: LÓGICA DEL DOM Y ARRANQUE DEL CRUD
+// LÓGICA DEL DOM Y ARRANQUE DEL CRUD
 // ==================================================================
 
 // Referencias
@@ -224,7 +226,7 @@ function renderizarTabla () {
         // 3: Asignamos 'fila' las propiedades del objeto medico
         fila.innerHTML = `
             <td>
-                <img src="${imagenSrc}" alt="Foto de ${medico.nombre}" width = "60" height = "60" style = "objet-fit: cover; border-radius: 50%;"/>
+                <img src="${imagenSrc}" alt="Foto de ${medico.nombre}" width = "60" height = "60" style = "object-fit: cover; border-radius: 50%;"/>
             </td>
             <td>${medico.titulo} ${medico.nombre} ${medico.apellido}</td>
             <td>${medico.especialidad}</td>

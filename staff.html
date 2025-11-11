@@ -40,6 +40,9 @@
                     <li class="nav-item">
                         <a class="nav-link" href="contacto.html">Contacto</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="login.html">Login</a>
+                    </li>
                 </ul>
             </div>
         </div>
@@ -51,6 +54,7 @@
         <section id="staff" class="text-center mt-5 pt-4">
             <h2 class="mb-4">Nuestro equipo médico</h2>
             <p class="mb-5">Contamos con profesionales comprometidos y altamente capacitados. Su salud en buenas manos...</p>
+            <div id="contenedor-medicos" class="row justify-content-center"></div>
         </section>
 
         
@@ -134,7 +138,7 @@
             // Referenciamos el contenedor con su id
             const contenedor = document.getElementById("contenedor-medicos");
             // Adquirimos los medicos del lS en formato JSON
-            const medicos = JSON.parse(localStorage.getItem("medicos_eventos")) || [];
+            const medicos = JSON.parse(localStorage.getItem("medicos")) || [];
 
             // Para cada medico de la lista
             medicos.forEach(medico => {
