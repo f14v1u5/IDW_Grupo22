@@ -19,4 +19,9 @@ v02
 v03
   Se agrega formulario para login
   Se agregan funciones para la administración (CRUD) del staff de médicos.
-  
+
+v04 - Final
+  Se modifica el CRUD de Médicos
+  Se agregan los CRUDs de Especialidades, Obras Sociales y Turnos
+  Se modifica el login utilizando DummyJSON
+  Se agrega la función para el listado de las reservas.
