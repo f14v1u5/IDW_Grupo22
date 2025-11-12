@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="es" data-bs-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Administración de Turnos - Clínica La Concordia</title>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="estilos/estilos.css" />
+  <style>
+    /* Ajuste para que el main quede visible debajo del nav */
+    main {
+      margin-top: 80px; /* Ajusta este valor según el tamaño del navbar */
+    }
+
+    .card-img-top {
+      width: 120px;
+      height: 120px;
+      object-fit: cover;
+      border-radius: 50%;
+      border: 4px solid #32a7ca;
+      margin-top: 10px;
+    }
+
+    .modal-header {
+      position: sticky;
+      top: 0;
+      background: var(--bs-body-bg);
+      z-index: 1055;
+      border-bottom: none;
+      padding-top: 1.5rem;
+      padding-bottom: 1rem;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+
+    .modal-body {
+      overflow-y: auto;
+      flex: 1;
+      padding: 1.5rem;
+    }
+
+    /* Estilos para los botones */
+    .btn-outline-selected {
+      background-color: white !important;
+      color: #007bff;
+      border-color: #007bff;
+    }
+
+    .btn-outline-selected:hover {
+      background-color: #007bff;
+      color: white;
+      border-color: #0056b3;
+    }
+
+    /* Cambio de color al hacer clic en el botón */
+    .btn-outline-danger.selected, .btn-outline-success.selected {
+      background-color: white;
+      color: #32a7ca;
+      border-color: #32a7ca;
+    }
+    .btn-outline-danger.selected:hover, .btn-outline-success.selected:hover {
+      background-color: #32a7ca;
+      color: white;
+    }
+
+  </style>
+</head>
+
+<body>
+  <!-- Header -->
+  <header>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+      <div class="container">
+        <a class="navbar-brand" href="index.html">
+          <img src="img/logo_blanco_nav.png" alt="Clínica La Concordia" height="40" />
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+          data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false"
+          aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <button id="tema" class="btn btn-outline-light ms-3"></button>
+        <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+          <ul class="navbar-nav">
+            <li class="nav-item"><a class="nav-link" href="index.html">Inicio</a></li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+    <div class="filete-azul"></div>
+  </header>
+
+  <!-- Main content for displaying turnos -->
+  <main class="container mt-7">
+    <h2 class="text-center mb-4">Administración de Turnos</h2>
+    <p class="lead text-center mb-4">Gestione, edite o agregue los profesionales que forman parte de nuestra clínica.</p>
+
+    <div id="turnos-seleccionados" class="mt-4">
+
+      <div class="text-center">
+        <!-- Botón para eliminar turno -->
+        <button id="eliminarTurnoBtn" class="btn btn-danger mt-3" data-bs-toggle="modal" data-bs-target="#modalEliminarTurno">Eliminar Turno</button>
+        
+        <!-- Botón para agregar turno -->
+        <button id="agregarTurnoBtn" class="btn btn-success mt-3" data-bs-toggle="modal" data-bs-target="#modalAgregarTurno">Agregar Turno</button>
+        <a href="administracion.html" class="btn btn-secondary mt-3 text-white">
+          Volver al menú
+        </a>
+      </div>
+    </div>
+  </main>
+
+  <!-- Modal para agregar turnos -->
+  <div class="modal fade" id="modalAgregarTurno" tabindex="-1" aria-labelledby="modalAgregarTurnoLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header flex-column align-items-center text-center">
+          <h5 class="modal-title mb-2 w-100" id="modalAgregarTurnoLabel">Agregar Turno</h5>
+          <button type="button" class="btn-close position-absolute end-0 top-0 mt-3 me-3" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+        <div class="modal-body">
+          <form id="formAgregarTurno">
+            <!-- Select Médico -->
+            <div class="mb-3">
+              <label for="selectMedico" class="form-label">Seleccione Médico</label>
+              <select id="selectMedico" class="form-select">
+                <option value="" selected>Seleccione el médico</option>
+                <!-- Opciones de médicos se llenarán dinámicamente -->
+              </select>
+            </div>
+
+            <!-- Foto del Médico -->
+            <div id="medicoFoto" class="mb-3" style="display: none;">
+              <img id="fotoMedico" class="card-img-top" alt="Foto del médico" />
+            </div>
+
+            <!-- Fecha Inicio y Fecha Fin -->
+            <div class="row mb-3">
+              <div class="col-6">
+                <label for="fechaInicio" class="form-label text-center d-block">Fecha de Inicio</label>
+                <input type="date" id="fechaInicio" class="form-control" required />
+              </div>
+              <div class="col-6">
+                <label for="fechaFin" class="form-label text-center d-block">Fecha de Fin</label>
+                <input type="date" id="fechaFin" class="form-control" required />
+              </div>
+            </div>
+
+            <!-- Hora Inicio y Hora Fin -->
+            <div class="row mb-3">
+              <div class="col-6">
+                <label for="horaInicio" class="form-label text-center d-block">Hora de Inicio</label>
+                <input type="time" id="horaInicio" class="form-control" required />
+              </div>
+              <div class="col-6">
+                <label for="horaFin" class="form-label text-center d-block">Hora de Fin</label>
+                <input type="time" id="horaFin" class="form-control" required />
+              </div>
+            </div>
+
+            <!-- Botones de Intervalo (15 min y 30 min) -->
+            <div class="mb-3 text-center">
+              <button type="button" class="btn btn-secondary me-2" id="btnIntervalo15">Intervalo 15 min</button>
+              <button type="button" class="btn btn-secondary" id="btnIntervalo30">Intervalo 30 min</button>
+            </div>
+
+            <!-- Botón para agregar turno -->
+            <div class="text-center">
+              <button type="submit" class="btn btn-primary">Agregar Turno</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal para eliminar turnos -->
+  <div class="modal fade" id="modalEliminarTurno" tabindex="-1" aria-labelledby="modalEliminarTurnoLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header flex-column align-items-center text-center">
+          <h5 class="modal-title mb-2 w-100" id="modalEliminarTurnoLabel">Eliminar Turno</h5>
+          <button type="button" class="btn-close position-absolute end-0 top-0 mt-3 me-3" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+        <div class="modal-body">
+          <form id="formEliminarTurno">
+            <div class="mb-3">
+              <label for="selectMedicoEliminar" class="form-label">Seleccione Médico</label>
+              <select id="selectMedicoEliminar" class="form-select">
+                <!-- Opciones de médicos se llenarán dinámicamente -->
+              </select>
+            </div>
+            <div id="turnosList" class="mb-3">
+              <!-- Aquí se listarán los turnos del médico -->
+            </div>
+            <div class="text-center">
+              <button type="submit" class="btn btn-danger">Eliminar Turno</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer mt-5 bg-dark text-white text-center py-3">
+    <p class="mb-0">Año 2025 - Clínica La Concordia</p>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    // Obtener los datos del localStorage
+    const medicos = JSON.parse(localStorage.getItem("medicos") || "[]");
+    const turnos = JSON.parse(localStorage.getItem("turnos") || "[]");
+
+    const selectMedico = document.getElementById("selectMedico");
+    const selectMedicoEliminar = document.getElementById("selectMedicoEliminar");
+    const medicoFoto = document.getElementById("fotoMedico");
+    const turnosList = document.getElementById("turnosList");
+
+    // Poblar select de médicos en los formularios
+    medicos.forEach(m => {
+      const opt = document.createElement("option");
+      opt.value = m.id;
+      opt.textContent = `${m.nombre} ${m.apellido}`;
+      selectMedico.appendChild(opt);
+      selectMedicoEliminar.appendChild(opt.cloneNode(true));
+    });
+
+    // Mostrar foto del médico al seleccionar
+    selectMedico.addEventListener("change", (e) => {
+        const medicoId = e.target.value;
+        const medico = medicos.find(m => m.id == medicoId);
+        if (medico && medico.imagenBase64) {
+            const foto = medico.imagenBase64.trim();
+            medicoFoto.style.display = "block"; // Mostrar la imagen
+            medicoFoto.src = foto.startsWith("data:image") ? foto : `data:image/jpeg;base64,${foto}`;
+        } else {
+            medicoFoto.style.display = "none"; // Ocultar la imagen si no hay
+        }
+    });
+
+    // Función para eliminar un turno
+    document.getElementById("formEliminarTurno").addEventListener("submit", function(e) {
+    e.preventDefault();
+
+    // Obtener el médico seleccionado
+    const medicoId = selectMedicoEliminar.value;
+    let turnosEliminados = 0;
+
+    // Filtrar los turnos del médico seleccionado
+    const turnosMedico = turnos.filter(t => t.medico == medicoId && t.disponible);
+
+    // Si no hay turnos disponibles para eliminar, mostrar un mensaje
+    if (turnosMedico.length === 0) {
+        alert("No hay turnos disponibles para eliminar.");
+        return;
+    }
+
+    // Eliminar los turnos disponibles
+    const turnosRestantes = turnos.filter(t => !(t.medico == medicoId && t.disponible));
+
+    // Actualizar el localStorage con los turnos restantes
+    localStorage.setItem("turnos", JSON.stringify(turnosRestantes));
+
+    // Contar los turnos eliminados
+    turnosEliminados = turnosMedico.length;
+
+    // Mostrar mensaje con la cantidad de turnos eliminados
+    alert(`Se han eliminado ${turnosEliminados} turnos del médico seleccionado.`);
+
+    // Recargar para actualizar la lista
+    location.reload();
+    });
+
+
+    // Función para agregar un turno
+    document.getElementById("formAgregarTurno").addEventListener("submit", (e) => {
+      e.preventDefault();
+      const medicoId = selectMedico.value;
+      const fecha = document.getElementById("fechaInicio").value;
+      const hora = document.getElementById("horaInicio").value;
+      const fechaFin = document.getElementById("fechaFin").value;
+      const horaFin = document.getElementById("horaFin").value;
+
+      if (!medicoId || !fecha || !hora || !fechaFin || !horaFin) {
+        return alert("Todos los campos son obligatorios.");
+      }
+
+      // Verificar si la fecha de fin es mayor que la de inicio
+      const fechaInicio = new Date(`${fecha}T${hora}`);
+      const fechaFinal = new Date(`${fechaFin}T${horaFin}`);
+      if (fechaFinal <= fechaInicio) {
+        return alert("La fecha y hora de fin deben ser posteriores a la fecha y hora de inicio.");
+      }
+
+      // Calcular la diferencia de tiempo en minutos
+      const diferenciaMinutos = (fechaFinal - fechaInicio) / (1000 * 60); // Diferencia en minutos
+
+      // Calcular la cantidad de turnos a generar (por ejemplo, si el intervalo es de 30 min)
+      const intervaloMinutos = 30; // Intervalo fijo de 30 minutos, se puede cambiar según los botones seleccionados
+      const cantidadTurnos = Math.floor(diferenciaMinutos / intervaloMinutos);
+
+      // Generar los turnos
+      const turnosGenerados = [];
+      for (let i = 0; i < cantidadTurnos; i++) {
+        const nuevoTurno = {
+          id: turnos.length ? Math.max(...turnos.map(t => t.id)) + 1 : 1,
+          medico: medicoId,
+          fecha: fecha,
+          hora: new Date(fechaInicio.getTime() + i * intervaloMinutos * 60000).toISOString().substr(11, 5), // Sumar el intervalo
+          disponible: true
+        };
+        turnos.push(nuevoTurno);
+        turnosGenerados.push(nuevoTurno);
+      }
+
+      // Guardar los turnos en localStorage
+      localStorage.setItem("turnos", JSON.stringify(turnos));
+
+      // Mostrar el mensaje de éxito con la cantidad de turnos generados
+      alert(`Se han generado ${turnosGenerados.length} turnos exitosamente.`);
+
+      // Cerrar el modal
+      document.getElementById("modalAgregarTurno").querySelector("button.btn-close").click();
+    });
+  </script>
+</body>
+</html>

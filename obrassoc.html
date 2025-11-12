@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="es" data-bs-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Obras Sociales - Clínica La Concordia</title>
+
+  <!-- Bootstrap -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="estilos/estilos.css" />
+
+  <style>
+    main {
+      padding-top: 120px;
+    }
+    .card {
+      border: 1px solid #c3e9eb;
+      border-radius: 8px;
+      padding: 22px;
+      width: 300px;
+      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.08);
+      position: relative;
+      text-align: center;
+      background: #fff;
+    }
+    .icons {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      display: flex;
+      gap: 8px;
+    }
+    .icon-btn {
+      width: 34px;
+      height: 34px;
+      display: inline-grid;
+      place-items: center;
+      border-radius: 6px;
+      border: 1px solid rgba(10, 100, 110, 0.12);
+      background: transparent;
+      cursor: pointer;
+    }
+    .icon-btn:hover {
+      background: rgba(10, 100, 110, 0.06);
+    }
+    .modal-backdrop-custom {
+      position: fixed;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0, 0, 0, 0.4);
+      z-index: 1055;
+    }
+    .modal-custom {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      width: 420px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    }
+
+    .modal-header-bg {
+      background: transparent;
+      padding-top: 0;
+      padding-bottom: 5px;
+      margin-top: -10px;
+      text-align: center;
+    }
+
+    .modal-title-text {
+      color: #000;
+      font-weight: bold;
+      font-size: 1.3rem;
+      margin: 0;
+      position: relative;
+      display: inline-block;
+      text-align: center;
+    }
+
+    .modal-header-bg::after {
+      content: "";
+      display: block;
+      justify-items: center;
+      width: 100%;
+      height: 3px;
+      background-color: #32a7ca;
+      border-radius: 2px;
+      margin: 10px auto 0 auto;
+    }    
+  </style>
+</head>
+
+<body>
+  <header>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+      <div class="container">
+        <a class="navbar-brand" href="/index.html">
+          <img src="img/logo_blanco_nav.png" alt="Clínica La Concordia" height="40" />
+        </a>
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+          aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <button id="tema" class="btn btn-outline-light ms-3"></button>
+
+        <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+          <ul class="navbar-nav">
+            <li class="nav-item"><a class="nav-link" href="index.html">Inicio</a></li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+    <div class="filete-azul"></div>
+  </header>
+
+  <main class="container text-center">
+    <h2 class="mb-4">Obras Sociales y Coberturas</h2>
+    <p class="lead mb-4">Gestione, edite o agregue las obras sociales disponibles en la clínica.</p>
+
+    <div class="mb-4 d-flex justify-content-center align-items-center gap-3">
+      <button id="btn-add" class="btn btn-info text-white">
+        ➕ Agregar nueva cobertura
+      </button>
+      <a href="administracion.html" class="btn btn-secondary text-white">
+        Volver al menú
+      </a>
+    </div>
+
+    <div id="cards" class="d-flex flex-wrap justify-content-center gap-3"></div>
+    <div id="empty" class="text-muted mt-3" style="display: none">
+      No hay registros en <code>localStorage.obrassoc</code>
+    </div>
+  </main>
+
+  <!-- Modal de edición/creación -->
+  <div id="modal" class="modal-backdrop-custom" aria-hidden="true">
+    <div class="modal-custom" role="dialog" aria-modal="true">
+      <div class="modal-header-bg">
+        <h4 id="modal-title" class="modal-title-text">Editar cobertura médica</h4>
+      </div>
+
+      <label class="form-label mt-2">Nombre</label>
+      <input id="input-nombre" type="text" class="form-control" />
+
+      <label class="form-label mt-3">Descripción</label>
+      <input id="input-descripcion" type="text" class="form-control" />
+
+      <div class="mt-3 text-end">
+        <button id="cancel" class="btn btn-secondary me-2">Cancelar</button>
+        <button id="save" class="btn btn-primary">Guardar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer mt-5 bg-dark text-white">
+    <div class="container py-4">
+      <div class="row align-items-center">
+        <div class="col-md-5 text-center text-md-start mb-3 mb-md-0">
+          <h5>Contacto</h5>
+          <p><strong>Correo electrónico:</strong><br /><a href="mailto:contacto@clinicalaconcordia.com"
+              class="text-white">contacto@clinicalaconcordia.com</a></p>
+          <p><strong>Teléfono:</strong><br /><a href="tel:+541123456789" class="text-white">(011) 2345-6789</a></p>
+        </div>
+
+        <div class="col-md-5 text-center text-md-start">
+          <h5>Ubicación</h5>
+          <p><strong>Dirección:</strong><br />Av. San Martin 123, Concordia, Entre Ríos</p>
+          <p><strong>Horario de atención:</strong><br />Lunes a Viernes de 8 a 18 hs.<br />Sábados de 9 a 13 hs.</p>
+          <div class="ratio ratio-16x9">
+            <iframe
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3311.042449136514!2d-58.0200!3d-31.3920!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMzHCsDIzJzMyLjIiUyA1OMKwMDEnMTIuMCJX!5e0!3m2!1ses!2sar!4v1700000000000"
+              width="100%" height="200" style="border: 0" allowfullscreen="" loading="lazy"
+              referrerpolicy="no-referrer-when-downgrade"></iframe>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom text-center mt-3 pb-3">
+      <p class="mb-0">Año 2025 - Clínica La Concordia</p>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="/js/dark.js"></script>
+
+  <script>
+    const STORAGE_KEY = 'obrassoc';
+    let obras = [];
+    let editingId = null;
+
+    const cardsWrap = document.getElementById('cards');
+    const emptyNotice = document.getElementById('empty');
+    const modal = document.getElementById('modal');
+    const inputNombre = document.getElementById('input-nombre');
+    const inputDescripcion = document.getElementById('input-descripcion');
+    const btnSave = document.getElementById('save');
+    const btnCancel = document.getElementById('cancel');
+    const btnAdd = document.getElementById('btn-add');
+    const modalTitle = document.getElementById('modal-title');
+
+    load();
+    render();
+
+    function load() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        obras = raw ? JSON.parse(raw) : [];
+      } catch (e) {
+        console.error('Error leyendo obrassoc:', e);
+        obras = [];
+      }
+    }
+
+    function save() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(obras));
+    }
+
+    function render() {
+      cardsWrap.innerHTML = '';
+      if (!obras.length) {
+        emptyNotice.style.display = 'block';
+        return;
+      }
+      emptyNotice.style.display = 'none';
+
+      obras.forEach(item => {
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML = `
+          <div class="icons">
+            <button class="icon-btn btn-edit" data-id="${item.id}" title="Editar">✏️</button>
+            <button class="icon-btn btn-delete" data-id="${item.id}" title="Eliminar">🗑️</button>
+          </div>
+          <h5>${escapeHtml(item.nombre)}</h5>
+          <p class="mb-0">${escapeHtml(item.descripcion)}</p>
+        `;
+        cardsWrap.appendChild(card);
+      });
+
+      document.querySelectorAll('.btn-delete').forEach(btn => btn.onclick = onDelete);
+      document.querySelectorAll('.btn-edit').forEach(btn => btn.onclick = onEdit);
+    }
+
+    function onDelete(e) {
+      const id = Number(e.currentTarget.dataset.id);
+      if (!confirm('¿Eliminar este registro?')) return;
+      obras = obras.filter(o => o.id !== id);
+      save();
+      render();
+    }
+
+    function onEdit(e) {
+      const id = Number(e.currentTarget.dataset.id);
+      const obra = obras.find(o => o.id === id);
+      if (!obra) return alert('Registro no encontrado');
+      editingId = id;
+      inputNombre.value = obra.nombre;
+      inputDescripcion.value = obra.descripcion;
+      modalTitle.textContent = 'Editar cobertura médica';
+      openModal();
+    }
+
+    btnAdd.onclick = () => {
+      editingId = null;
+      inputNombre.value = '';
+      inputDescripcion.value = '';
+      modalTitle.textContent = 'Agregar nueva cobertura médica';
+      openModal();
+    };
+
+    function openModal() {
+      modal.style.display = 'flex';
+      modal.setAttribute('aria-hidden', 'false');
+      inputNombre.focus();
+    }
+    function closeModal() {
+      modal.style.display = 'none';
+      modal.setAttribute('aria-hidden', 'true');
+      editingId = null;
+    }
+
+    btnCancel.onclick = closeModal;
+    btnSave.onclick = () => {
+      const nombre = inputNombre.value.trim();
+      const descripcion = inputDescripcion.value.trim();
+      if (!nombre) return alert('El nombre no puede quedar vacío.');
+
+      if (editingId === null) {
+        const newId = obras.length ? Math.max(...obras.map(o => o.id)) + 1 : 1;
+        obras.push({ id: newId, nombre, descripcion });
+      } else {
+        const idx = obras.findIndex(o => o.id === editingId);
+        if (idx === -1) return alert('No encontrado');
+        obras[idx].nombre = nombre;
+        obras[idx].descripcion = descripcion;
+      }
+
+      save();
+      render();
+      closeModal();
+    };
+
+    function escapeHtml(str) {
+      return String(str || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    window.addEventListener('keydown', ev => {
+      if (ev.key === 'Escape' && modal.style.display === 'flex') closeModal();
+    });
+  </script>
+</body>
+</html>

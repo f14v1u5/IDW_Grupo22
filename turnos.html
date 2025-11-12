@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="es" data-bs-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Consulta de Turnos - Clínica La Concordia</title>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="estilos/estilos.css" />
+  <style>
+    main { padding-top: 120px; }
+    .card-turno {
+      border: 3px solid #c3e9eb;
+      border-radius: 8px;
+      padding: 16px;
+      width: 260px;
+      text-align: center;
+      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.08);
+      background: #fff;
+    }
+
+    .card-img-top {
+      width: 120px;
+      height: 120px;
+      object-fit: cover;
+      border-radius: 50%;
+      border: 4px solid #32a7ca;
+      margin-top: 10px;
+    }
+
+    .turnos-fecha {
+      border-top: 2px solid #c3e9eb;
+      padding-top: 10px;
+    }
+
+    .turnos-fecha h5 {
+      font-size: 1.1rem;
+      color: #333;
+    }
+
+    .turnos-fecha button {
+      width: 100%;
+    }
+
+    .modal-content {
+      max-height: 80vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .modal-header {
+      position: sticky;
+      top: 0;
+      background: var(--bs-body-bg);
+      z-index: 1055;
+      border-bottom: none;
+      padding-top: 1.5rem;
+      padding-bottom: 1rem;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+
+    .modal-header .modal-title {
+      color: #000;
+      font-size: 1.25rem;
+      margin-bottom: 0.5rem;
+    }
+
+    #nombreMedicoModal {
+      font-weight: 700;
+    }
+
+    .filete-azul {
+      width: 80%;
+      height: 3px;
+      background-color: #32a7ca;
+      border-radius: 2px;
+      margin: 0.5rem auto 0;
+    }
+
+    .modal-header .btn-close {
+      position: absolute;
+      right: 1rem;
+      top: 1rem;
+    }
+
+    .modal-body {
+      overflow-y: auto;
+      flex: 1;
+      padding: 1.5rem;
+    }
+
+    #modalTurnos .modal-dialog {
+      max-width: 50%;
+    }
+
+    @media (max-width: 768px) {
+      #modalTurnos .modal-dialog {
+        max-width: 90%;
+      }
+    }
+
+    .btn-outline-success:disabled {
+        background-color: white;
+        color: #32a7ca; 
+        border: 2px solid #32a7ca; 
+        font-weight: bold;
+    }
+
+    .btn-outline-success:not(:disabled) {
+        background-color: white; 
+        color: #32a7ca;
+        font-weight: bold;
+        border: 2px solid #32a7ca;
+    }
+
+    .btn-outline-success:not(:disabled):hover {
+        background-color: #287c94; 
+        color: white;
+        border-color: #287c94; 
+    }
+
+    .btn-outline-success:active {
+        background-color: #32a7ca;
+        color: white; 
+        border-color: #32a7ca;
+    }
+
+  </style>
+</head>
+
+<body>
+  <header>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+      <div class="container">
+        <a class="navbar-brand" href="index.html">
+          <img src="img/logo_blanco_nav.png" alt="Clínica La Concordia" height="40" />
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+          data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false"
+          aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <button id="tema" class="btn btn-outline-light ms-3"></button>
+        <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+          <ul class="navbar-nav">
+            <li class="nav-item"><a class="nav-link" href="index.html">Inicio</a></li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+    <div class="filete-azul"></div>
+  </header>
+
+  <main class="container">
+    <h2 class="text-center mb-4">Consulta de Disponibilidad de Turnos</h2>
+
+    <form id="form-busqueda" class="row g-3 justify-content-center mb-4">
+      <div class="col-md-4">
+        <label for="select-obra" class="form-label">Cobertura Médica</label>
+        <select id="select-obra" class="form-select">
+          <option value="">Seleccione...</option>
+        </select>
+      </div>
+      <div class="col-md-4">
+        <label for="select-especialidad" class="form-label">Especialidad</label>
+        <select id="select-especialidad" class="form-select">
+          <option value="">Seleccione...</option>
+        </select>
+      </div>
+      <div class="col-12 text-center mt-3">
+        <button type="submit" class="btn btn-primary">Buscar médicos disponibles</button>
+      </div>
+    </form>
+
+    <div id="resultado" class="text-center"></div>
+  </main>
+
+  <footer class="footer mt-5 bg-dark text-white text-center py-3">
+    <p class="mb-0">Año 2025 - Clínica La Concordia</p>
+  </footer>
+
+  <!-- Modal Turnos -->
+  <div class="modal fade" id="modalTurnos" tabindex="-1" aria-labelledby="modalTurnosLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header flex-column align-items-center text-center">
+          <h5 class="modal-title mb-2 w-100" id="modalTurnosLabel">
+            Turnos de <span id="nombreMedicoModal" class="fw-bold"></span>
+          </h5>
+          <div class="filete-azul"></div>
+          <button type="button" class="btn-close position-absolute end-0 top-0 mt-3 me-3" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+        <div class="modal-body text-center" id="modalBodyContent">
+          <div id="listaTurnos"></div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal No Hay Turnos -->
+  <div class="modal fade" id="modalNoTurnos" tabindex="-1" aria-labelledby="modalNoTurnosLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header flex-column align-items-center text-center">
+          <h5 class="modal-title mb-2" id="modalNoTurnosLabel">No hay turnos disponibles</h5>
+          <div class="filete-azul"></div>
+          <button type="button" class="btn-close position-absolute end-0 top-0 mt-3 me-3" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+        <div class="modal-body text-center">
+          <p>No se encontraron turnos disponibles para el médico seleccionado. Intente con otro médico o especialidad.</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Volver</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+  <script>
+    emailjs.init("RIeYSjyPAUER6osYc");
+
+    const selectObra = document.getElementById("select-obra");
+    const selectEspecialidad = document.getElementById("select-especialidad");
+    const formBusqueda = document.getElementById("form-busqueda");
+    const resultado = document.getElementById("resultado");
+
+    const modal = new bootstrap.Modal(document.getElementById("modalTurnos"));
+    const listaTurnos = document.getElementById("listaTurnos");
+    const nombreMedicoModal = document.getElementById("nombreMedicoModal");
+
+    const obras = JSON.parse(localStorage.getItem("obrassoc") || "[]");
+    const especialidades = JSON.parse(localStorage.getItem("especialidades") || "[]");
+    const medicosRaw = JSON.parse(localStorage.getItem("medicos") || "[]");
+    const turnosRaw = JSON.parse(localStorage.getItem("turnos") || "[]");
+
+    const medicos = medicosRaw.map(m => ({ ...m, id: Number(m.id) }));
+    const turnos = turnosRaw.map(t => ({ ...t, medico: Number(t.medico) }));
+
+    // Poblar selects
+    obras.forEach(o => {
+      const opt = document.createElement("option");
+      opt.value = o.id;
+      opt.textContent = o.nombre;
+      selectObra.appendChild(opt);
+    });
+
+    especialidades.forEach(e => {
+      const opt = document.createElement("option");
+      opt.value = e.nombre;
+      opt.textContent = e.nombre;
+      selectEspecialidad.appendChild(opt);
+    });
+
+    formBusqueda.addEventListener("submit", (ev) => {
+      ev.preventDefault();
+      const obraId = Number(selectObra.value);
+      const especialidadNombre = selectEspecialidad.value;
+
+      if (!obraId || !especialidadNombre) {
+        return alert("Debe seleccionar cobertura médica y especialidad.");
+      }
+
+      resultado.innerHTML = "<p class='text-muted'>Buscando médicos disponibles...</p>";
+
+      const medicosFiltrados = medicos.filter(m => {
+        if (!m.especialidad) return false;
+        if (m.especialidad.trim().toLowerCase() !== especialidadNombre.trim().toLowerCase()) return false;
+        const obrasArray = Array.isArray(m.obrasSociales) ? m.obrasSociales.map(Number) : [];
+        return obrasArray.includes(obraId);
+      });
+
+      if (!medicosFiltrados.length) {
+        resultado.innerHTML = "<p class='text-danger'>No se encontraron médicos para esos criterios.</p>";
+        return;
+      }
+
+      resultado.innerHTML = "";
+      medicosFiltrados.forEach(m => {
+        const turnosMedico = turnos.filter(t => t.medico === m.id && t.disponible);
+
+        let imagenSrc = "./img/medicos/generico.jpg";
+        if (m.imagenBase64) {
+          const fotoLimpia = m.imagenBase64.trim();
+          imagenSrc = fotoLimpia.startsWith("data:image") ? fotoLimpia : `data:image/jpeg;base64,${fotoLimpia}`;
+        }
+
+        const div = document.createElement("div");
+        div.className = "card-turno mx-auto mb-3";
+        div.innerHTML = `
+          <img src="${imagenSrc}" class="card-img-top" alt="Imagen de ${m.nombre} ${m.apellido || ''}">
+          <h5>${m.nombre} ${m.apellido || ''}</h5>
+          <p><strong>Especialidad:</strong> ${m.especialidad}</p>
+          <button class="btn btn-primary btn-turnos" data-medico-id="${m.id}">Ver turnos disponibles</button>
+        `;
+        resultado.appendChild(div);
+      });
+
+      document.querySelectorAll(".btn-turnos").forEach(btn => {
+        btn.addEventListener("click", (e) => {
+          const medicoId = Number(e.target.dataset.medicoId);
+          const medico = medicos.find(m => m.id === medicoId);
+          const turnosMedico = turnos.filter(t => t.medico === medicoId && t.disponible);
+
+          nombreMedicoModal.textContent = `${medico.nombre} ${medico.apellido || ''}`;
+          listaTurnos.innerHTML = "";
+
+          if (!turnosMedico.length) {
+            listaTurnos.innerHTML = "<p class='text-muted'>No hay turnos disponibles para este médico.</p>";
+            alert("No se encontraron turnos disponibles")
+            return;
+          }
+          const turnosPorFecha = {};
+          turnosMedico.forEach(t => {
+            const fechaClave = t.fecha;
+            if (!turnosPorFecha[fechaClave]) turnosPorFecha[fechaClave] = [];
+            turnosPorFecha[fechaClave].push(t);
+          });
+
+          
+
+          for (const fechaClave in turnosPorFecha) {
+            const turnosFecha = turnosPorFecha[fechaClave];
+            const fechaDiv = document.createElement("div");
+            fechaDiv.className = "turnos-fecha mb-3";
+
+            const fechaObj = new Date(`${fechaClave}T00:00:00`);
+            const textoFecha = !isNaN(fechaObj)
+              ? fechaObj.toLocaleDateString("es-AR", { weekday: "long", day: "2-digit", month: "long", year: "numeric" })
+              : fechaClave;
+
+            const encabezadoFecha = document.createElement("h5");
+            encabezadoFecha.className = "mb-2 text-primary";
+            encabezadoFecha.textContent = textoFecha;
+            fechaDiv.appendChild(encabezadoFecha);
+
+            turnosFecha.forEach(t => {
+              const btnTurno = document.createElement("button");
+              btnTurno.className = "btn btn-outline-success m-2";
+
+              const fechaISO = `${t.fecha}T${t.hora}`;
+              const fechaHora = new Date(fechaISO);
+              const textoHora = !isNaN(fechaHora)
+                ? fechaHora.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+                : t.hora;
+
+              btnTurno.textContent = textoHora;
+
+              btnTurno.onclick = () => {
+                const confirma = confirm(`¿Confirma el turno de las ${textoHora}?`);
+                if (!confirma) return;
+
+                listaTurnos.innerHTML = `
+                  <form id="formReserva" class="text-start">
+                    <div class="mb-3">
+                      <label for="nombrePaciente" class="form-label">Nombre y Apellido</label>
+                      <input type="text" class="form-control" id="nombrePaciente" required>
+                    </div>
+                    <div class="mb-3">
+                      <label for="documentoPaciente" class="form-label">Documento</label>
+                      <input type="text" class="form-control" id="documentoPaciente" required>
+                    </div>
+                    <div class="mb-3">
+                      <label for="emailPaciente" class="form-label">Correo electrónico</label>
+                      <input type="email" class="form-control" id="emailPaciente" required>
+                    </div>
+                    <div class="d-flex justify-content-end">
+                      <button type="button" id="cancelarReserva" class="btn btn-secondary me-2">Cancelar</button>
+                      <button type="submit" class="btn btn-primary">Guardar</button>
+                    </div>
+                  </form>
+                `;
+
+                document.getElementById("cancelarReserva").onclick = () => {
+                  btn.click();
+                };
+
+                document.getElementById("formReserva").onsubmit = async (ev) => {
+                  ev.preventDefault();
+                  const nombre = document.getElementById("nombrePaciente").value.trim();
+                  const documento = document.getElementById("documentoPaciente").value.trim();
+                  const email = document.getElementById("emailPaciente").value.trim();
+
+                  if (!nombre || !documento || !email) {
+                    alert("Todos los campos son obligatorios");
+                    return;
+                  }
+
+                  const indexTurno = turnos.findIndex(tr => tr.medico === medicoId && tr.fecha === t.fecha && tr.hora === t.hora);
+                  if (indexTurno !== -1) {
+                    turnos[indexTurno].disponible = false;
+                    localStorage.setItem("turnos", JSON.stringify(turnos));
+                  }
+
+                  let reservas = JSON.parse(localStorage.getItem("reservas") || "[]");
+                  const nuevaReserva = {
+                    id: reservas.length ? Math.max(...reservas.map(r => r.id)) + 1 : 1,
+                    documento: documento,
+                    paciente: nombre,
+                    turno: t.id,
+                    especialidad: medico.especialidad || "",
+                    obraSocial: selectObra.value,
+                    valorTotal: medico.valorConsulta || 0 // Utilizando el valor de consulta del médico
+                  };
+                  reservas.push(nuevaReserva);
+                  localStorage.setItem("reservas", JSON.stringify(reservas));
+
+
+                  // Enviar correo
+                  try {
+                    await emailjs.send("uner.idw.022","template_f2av6hi", {
+                      to_email: email,
+                      especialidad: medico.especialidad || "",
+                      medico: `${medico.nombre} ${medico.apellido || ''}`,
+                      dia: textoFecha.split(",")[0],
+                      fecha: textoFecha.split(",").slice(1).join(",").trim(),
+                      hora: textoHora
+                    });
+                    alert("Turno reservado y correo enviado con éxito!");
+                  } catch (error) {
+                    console.error(error);
+                    alert("Turno reservado, pero hubo un error enviando el correo.");
+                  }
+
+                  modal.hide();
+                };
+              };
+
+              fechaDiv.appendChild(btnTurno);
+            });
+
+            listaTurnos.appendChild(fechaDiv);
+          }
+
+          modal.show();
+        });
+      });
+    });
+  </script>
+</body>
+</html>

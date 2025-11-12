@@ -86,4 +86,3 @@ function cargaOpciones () {
     }
 }
 document.addEventListener('DOMContentLoaded', cargaOpciones);
-

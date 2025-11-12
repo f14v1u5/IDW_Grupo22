@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="es" data-bs-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Staff Médico - Clínica La Concordia</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="estilos/estilos.css" />
+  <style>
+    main { padding-top: 120px; }
+    .card {
+      border: 1px solid #c3e9eb;
+      border-radius: 8px;
+      padding: 22px;
+      width: 300px;
+      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.08);
+      position: relative;
+      background: #fff;
+      text-align: center;
+    }
+    .card img {
+      border-radius: 50%;
+      width: 90px;
+      height: 90px;
+      object-fit: cover;
+      margin-bottom: 12px;
+    }
+    .icons {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      display: flex;
+      gap: 8px;
+    }
+    .icon-btn {
+      width: 34px;
+      height: 34px;
+      display: inline-grid;
+      place-items: center;
+      border-radius: 6px;
+      border: 1px solid rgba(10, 100, 110, 0.12);
+      background: transparent;
+      cursor: pointer;
+    }
+    .icon-btn:hover {
+      background: rgba(10, 100, 110, 0.06);
+    }
+      
+    .modal-custom {
+      background: white;
+      padding: 20px 25px;
+      border-radius: 10px;
+      width: 800px;
+      max-width: 95%;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    }
+  
+    .modal-backdrop-custom {
+      position: fixed;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0, 0, 0, 0.4);
+      z-index: 1055;
+    }
+
+    /* Encabezado del modal con texto centrado y filete inferior */
+    /* Encabezado del modal con título centrado y filete inferior */
+    .modal-header-bg {
+      background: transparent;
+      padding-top: 0;
+      padding-bottom: 5px;
+      margin-top: -10px;
+      text-align: center; /* Centra el título */
+    }
+
+    /* Estilo del título */
+    .modal-title-text {
+      color: #000;
+      font-weight: bold;
+      font-size: 1.3rem;
+      margin: 0;
+      position: relative;
+      display: inline-block;
+      text-align: center; /* Asegura que el título esté centrado */
+    }
+
+    /* Línea debajo del título (filete) */
+    .modal-header-bg::after {
+      content: "";
+      display: block;
+      justify-items: center;
+      width: 100%; /* Ancho extendido a 180% */
+      height: 3px;
+      background-color: #32a7ca;
+      border-radius: 2px;
+      /*margin: 10px auto 0 auto; /* Centra la línea debajo del título */
+    }
+
+    #modal-title {
+      font-weight: 600;
+    }
+
+    /* Imagen de la fotografía dentro del modal */
+    #preview-imagen {
+      width: 90px;
+      height: 90px;
+      object-fit: cover;
+      border-radius: 50%;
+      border: 4px solid #32a7ca; /* Borde similar al de la página principal */
+      margin-top: 10px;
+    }
+    
+    #form-medico .form-label {
+      font-weight: 500;
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+      <div class="container">
+        <a class="navbar-brand" href="/index.html">
+          <img src="img/logo_blanco_nav.png" alt="Clínica La Concordia" height="40">
+        </a>
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+          data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false"
+          aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <button id="tema" class="btn btn-outline-light ms-3"></button>
+
+        <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+          <ul class="navbar-nav">
+            <li class="nav-item"><a class="nav-link" href="index.html">Inicio</a></li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+    <div class="filete-azul"></div>
+  </header>
+
+  <!-- …[lo mismo que tu header y navbar]… -->
+
+<main class="container text-center">
+  <h2 class="mb-4">Nuestro Equipo Médico</h2>
+  <p class="lead mb-4">Gestione, edite o agregue los profesionales que forman parte de nuestra clínica.</p>
+
+  <div class="mb-4 d-flex justify-content-center align-items-center gap-3">
+    <button id="btn-add" class="btn btn-info text-white">
+      ➕ Agregar nuevo médico
+    </button>
+    <a href="administracion.html" class="btn btn-secondary text-white">
+      Volver al menú
+    </a>
+  </div>
+
+  <div id="cards" class="d-flex flex-wrap justify-content-center gap-3"></div>
+  <div id="empty" class="text-muted mt-3" style="display:none;">
+    No hay registros en <code>localStorage.medicos</code>
+  </div>
+</main>
+
+<!-- Modal -->
+<div id="modal" class="modal-backdrop-custom" aria-hidden="true">
+  <div class="modal-custom" role="dialog" aria-modal="true">
+    <div class="modal-header-bg">
+      <h4 id="modal-title" class="modal-title-text">Editar médico</h4>
+    </div>
+
+    <form id="form-medico" class="row g-3">
+      <!-- Matrícula -->
+      <div class="col-md-4">
+        <label class="form-label">Matrícula</label>
+        <input id="input-matricula" type="number" class="form-control" min="0" step="1" />
+      </div>
+
+      <!-- Nombre y Apellido -->
+      <div class="col-md-4">
+        <label class="form-label">Nombre</label>
+        <input id="input-nombre" type="text" class="form-control" />
+      </div>
+      <div class="col-md-4">
+        <label class="form-label">Apellido</label>
+        <input id="input-apellido" type="text" class="form-control" />
+      </div>
+
+      <!-- Especialidad y Obras Sociales -->
+      <div class="col-md-6">
+        <label class="form-label">Especialidad</label>
+        <select id="input-especialidad" class="form-select"></select>
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Obras Sociales (IDs, separados por coma)</label>
+        <input id="input-obras" type="text" class="form-control" placeholder="Ej: 1,2,3" />
+      </div>
+
+      <!-- Descripción -->
+      <div class="col-12">
+        <label class="form-label">Descripción</label>
+        <textarea id="input-descripcion" class="form-control" rows="2"></textarea>
+      </div>
+
+      <!-- Valor de Consulta y Foto -->
+      <div class="col-md-6">
+        <label class="form-label">Valor de Consulta</label>
+        <input id="input-valor" type="number" class="form-control" />
+      </div>
+      <div class="col-md-6 text-center">
+        <label class="form-label">Fotografía</label>
+        <input id="input-imagen" type="file" class="form-control" accept="image/*" />
+        <img id="preview-imagen" src="img/placeholder.png" class="rounded-circle mt-2" style="width:90px; height:90px; object-fit:cover; border:2px solid #c3e9eb;">
+      </div>
+
+      <!-- Botones -->
+      <div class="col-12 text-end mt-3">
+        <button id="cancel" type="button" class="btn btn-secondary me-2">Cancelar</button>
+        <button id="save" type="button" class="btn btn-primary">Guardar</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+
+<script>
+  const STORAGE_KEY = 'medicos';
+  let medicos = [];
+  let editingId = null;
+
+  const cardsWrap = document.getElementById('cards');
+  const emptyNotice = document.getElementById('empty');
+  const modal = document.getElementById('modal');
+  const inputMatricula = document.getElementById('input-matricula');
+  const inputNombre = document.getElementById('input-nombre');
+  const inputApellido = document.getElementById('input-apellido');
+  const inputEspecialidad = document.getElementById('input-especialidad');
+  const inputObras = document.getElementById('input-obras');
+  const inputDescripcion = document.getElementById('input-descripcion');
+  const inputValor = document.getElementById('input-valor');
+  // Nuevo campo: imagen
+  const inputImagen = document.getElementById('input-imagen');
+  const previewImagen = document.getElementById('preview-imagen');
+  let imagenBase64Actual = null;
+
+  // Previsualizar y convertir a Base64
+  inputImagen.addEventListener('change', e => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function(evt) {
+      imagenBase64Actual = evt.target.result;
+      previewImagen.src = imagenBase64Actual;
+    };
+    reader.readAsDataURL(file);
+  });
+
+  const btnSave = document.getElementById('save');
+  const btnCancel = document.getElementById('cancel');
+  const btnAdd = document.getElementById('btn-add');
+  const modalTitle = document.getElementById('modal-title');
+
+  load();
+  cargarEspecialidades();
+  render();
+
+  function save() {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(medicos));
+  }
+
+  function load() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      medicos = raw ? JSON.parse(raw) : [];
+    } catch (e) {
+      medicos = [];
+    }
+
+    // Asegurar IDs únicos persistentes
+    let changed = false;
+    medicos.forEach(m => {
+      if (!m.id) {
+        m.id = Date.now() + Math.floor(Math.random() * 1000);
+        changed = true;
+      }
+    });
+    if (changed) save();
+  }
+
+  function cargarEspecialidades() {
+    const especialidades = JSON.parse(localStorage.getItem('especialidades') || '[]');
+    const sel = document.getElementById('input-especialidad');
+    sel.innerHTML = '<option value="">Seleccione una especialidad</option>';
+    especialidades.forEach(e => {
+      const opt = document.createElement('option');
+      opt.value = e.id;
+      opt.textContent = e.nombre;
+      sel.appendChild(opt);
+    });
+  }
+
+  function render() {
+    cardsWrap.innerHTML = '';
+
+    if (!medicos.length) {
+      emptyNotice.style.display = 'block';
+      return;
+    }
+
+    emptyNotice.style.display = 'none';
+
+    medicos.forEach(med => {
+      const imgSrc = med.imagenBase64 || 'img/placeholder.png';
+      const especialidades = JSON.parse(localStorage.getItem('especialidad') || '[]');
+      const esp = especialidades.find(e => Number(e.id) === Number(med.especialidad));
+      const nombreEsp = esp ? esp.nombre : `${med.especialidad}`;
+
+      const card = document.createElement('div');
+      card.className = 'card p-3';
+      card.innerHTML = `
+        <div class="d-flex justify-content-end mb-2">
+          <button class="icon-btn btn-edit me-2" data-id="${med.id}" title="Editar">✏️</button>
+          <button class="icon-btn btn-delete" data-id="${med.id}" title="Eliminar">🗑️</button>
+        </div>
+        <img src="${imgSrc}" class="card-img-top" alt="${escapeHtml(med.nombre)}">
+        <h5>${escapeHtml(med.nombre)} ${escapeHtml(med.apellido)}</h5>
+        <h6 class="text-muted">Especialidad: ${escapeHtml(nombreEsp)}</h6>
+        <p class="mb-1">${escapeHtml(med.descripcion || '')}</p>
+        <p class="mb-0 text-muted">Valor: $${med.valorConsulta || 0}</p>
+        <p class="text-muted small">Matrícula: ${med.matricula || '-'}</p>
+      `;
+      cardsWrap.appendChild(card);
+    });
+
+    document.querySelectorAll('.btn-delete').forEach(btn => btn.onclick = onDelete);
+    document.querySelectorAll('.btn-edit').forEach(btn => btn.onclick = onEdit);
+  }
+
+  function onEdit(e) {
+    const id = Number(e.currentTarget.dataset.id);
+    const med = medicos.find(m => Number(m.id) === id);
+    if (!med) {
+      alert("No se encontró el médico (posible ID inconsistente).");
+      return;
+    }
+
+    editingId = med.id;
+
+    inputMatricula.value = med.matricula || '';
+    inputNombre.value = med.nombre || '';
+    inputApellido.value = med.apellido || '';
+
+    // Obtener la lista de especialidades del localStorage
+    const especialidades = JSON.parse(localStorage.getItem('especialidades') || '[]');
+    
+    // Buscar la especialidad cuyo nombre coincida con med.especialidad
+    const especialidadSeleccionada = especialidades.find(e => e.nombre === med.especialidad);
+    
+    // Si encontramos la especialidad, asignamos su id al select
+    if (especialidadSeleccionada) {
+      inputEspecialidad.value = especialidadSeleccionada.id; 
+    } else {
+      inputEspecialidad.value = '';
+    }
+
+    inputObras.value = med.obrasSociales ? med.obrasSociales.join(',') : '';
+    inputDescripcion.value = med.descripcion || '';
+    inputValor.value = med.valorConsulta || '';
+    imagenBase64Actual = med.imagenBase64 || null;
+    previewImagen.src = med.imagenBase64 || 'img/placeholder.png';
+
+    modalTitle.textContent = 'Editar médico';
+    openModal();
+  }
+
+
+  function onDelete(e) {
+    const id = Number(e.currentTarget.dataset.id); 
+    console.log('ID del botón:', id); 
+
+    if (!confirm('¿Eliminar este médico?')) return;
+
+    const originalLength = medicos.length;
+
+    // Imprime todos los médicos y sus ids para verificar la consistencia
+    console.log('Médicos antes del filtro:', medicos);
+
+    const filteredMedicos = medicos.filter(m => {
+      console.log(`Comparando: ${Number(m.id)} !== ${id}`);
+      return Number(m.id) !== id;
+    });
+
+    console.log('Médicos después del filtro:', filteredMedicos);
+
+    if (filteredMedicos.length !== originalLength) {
+      medicos = filteredMedicos; 
+      save(); 
+      render();
+      alert('Médico eliminado correctamente.');
+    } else {
+      alert(`No se pudo eliminar el médico (ID no encontrado): ${id}`);
+    }
+  }
+
+  btnAdd.onclick = () => {
+    editingId = null;
+    inputMatricula.value = '';
+    inputNombre.value = '';
+    inputApellido.value = '';
+    inputEspecialidad.value = '';
+    inputObras.value = '';
+    inputDescripcion.value = '';
+    inputValor.value = '';
+    imagenBase64Actual = null;
+    previewImagen.src = 'img/placeholder.png';
+    modalTitle.textContent = 'Agregar médico';
+    openModal();
+  };
+
+  function openModal() {
+    modal.style.display = 'flex';
+    modal.setAttribute('aria-hidden', 'false');
+  }
+  function closeModal() {
+    modal.style.display = 'none';
+    modal.setAttribute('aria-hidden', 'true');
+    editingId = null;
+  }
+
+  btnCancel.onclick = closeModal;
+
+  btnSave.onclick = () => {
+    const matricula = Number(inputMatricula.value.trim());
+    const nombre = inputNombre.value.trim();
+    const apellido = inputApellido.value.trim();
+    const especialidadNum = Number(inputEspecialidad.value.trim());
+    const obrasSociales = inputObras.value.split(',').map(x => Number(x.trim())).filter(x => !isNaN(x));
+    const descripcion = inputDescripcion.value.trim();
+    const valorConsulta = Number(inputValor.value.trim());
+
+    if (!nombre || !apellido || !especialidadNum) return alert('Nombre, Apellido y Especialidad son obligatorios.');
+
+    // Determino el nombre de la especialidad
+    const especialidades = JSON.parse(localStorage.getItem('especialidades') || '[]');
+    const especialidadSeleccionada = especialidades.find(e => e.id === especialidadNum);
+    const especialidad = especialidadSeleccionada.nombre;
+
+    if (editingId === null) {
+      const newId = medicos.length ? Math.max(...medicos.map(m => m.id)) + 1 : 1;
+      medicos.push({
+        id: newId,
+        matricula,
+        nombre,
+        apellido,
+        especialidad,
+        obrasSociales,
+        descripcion,
+        valorConsulta,
+        imagenBase64: imagenBase64Actual || null
+      });
+    } else {
+      const idx = medicos.findIndex(m => m.id === editingId);
+      if (idx !== -1) {
+        medicos[idx].matricula = matricula;
+        medicos[idx].nombre = nombre;
+        medicos[idx].apellido = apellido;
+        medicos[idx].especialidad = especialidad;
+        medicos[idx].obrasSociales = obrasSociales;
+        medicos[idx].descripcion = descripcion;
+        medicos[idx].valorConsulta = valorConsulta;
+        medicos[idx].imagenBase64 = imagenBase64Actual || medicos[idx].imagenBase64 || null;
+      }
+    }
+    save();
+    render();
+    closeModal();
+  };
+
+  function escapeHtml(str) {
+    return String(str || '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
+  }
+
+  window.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && modal.style.display === 'flex') closeModal();
+  });
+</script>
+
+</body>
+</html>

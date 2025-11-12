@@ -1,0 +1,5 @@
+[
+  { "id": 1, "nombre": "OSDE", "descripcion": "Cobertura médica nacional e internacional" },
+  { "id": 2, "nombre": "Galeno", "descripcion": "Obra social con atención integral" },
+  { "id": 3, "nombre": "Swiss Medical", "descripcion": "Cobertura premium para todas las especialidades" }
+]

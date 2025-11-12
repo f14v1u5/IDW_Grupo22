@@ -32,11 +32,6 @@ function cargaUsuarios() {
 
 window.cargarUsuarios = cargarUsuarios;
 
-/**
- * Renderiza la tabla con los datos de los usuarios.
- * @param {Array} usuarios - Lista de objetos de usuario.
- * @param {HTMLElement} tabla - El elemento <tbody> de la tabla.
- */
 function renderizarTablaUsuarios(usuarios, tabla) {
     tabla.innerHTML = ''; // Limpiar la tabla
     
