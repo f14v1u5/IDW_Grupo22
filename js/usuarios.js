@@ -36,8 +36,7 @@ function renderizarTablaUsuarios(usuarios, tabla) {
     tabla.innerHTML = ''; // Limpiar la tabla
     
     usuarios.forEach(user => {
-        // 🚨 FILTRADO DE DATOS SENSIBLES (Modo Novato):
-        // Solo extraemos campos seguros para la vista administrativa.
+        // Recorremos cada ususario para extraer los datos necesarios
         const { id, firstName, lastName, username, email, phone, age, address } = user;
         
         const ciudad = address && address.city ? address.city : 'N/A';
