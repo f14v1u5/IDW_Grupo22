@@ -35,9 +35,6 @@ function logout () {
     window.location.reload();
 }
 
-function volverAtras () {
-    
-}
 
 // ---- PANTALLA DE LOGIN Y PANEL ----
 function cargaOpciones () {
